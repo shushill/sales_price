@@ -1,0 +1,180 @@
+// yyyy-MM-dd
+
+
+
+basePricing
+
+{
+
+“basePrice” : 200,
+
+“rangePrice” : [
+
+{
+
+“startDate” : “2024-01-15”,
+
+“endDate” : “2024-02-15”,
+
+“salePrice” : 500
+
+},
+
+{
+
+“startDate” : “2024-03-15”,
+
+“endDate” : “2024-04-15”,
+
+“salePrice” : 300
+
+},
+
+{
+
+“startDate” : “2024-04-16”,
+
+“endDate” : “2024-05-15”,
+
+“salePrice” : 700
+
+},
+
+{
+
+“startDate” : “2024-05-16”,
+
+“endDate” : “2024-06-15”,
+
+“salePrice” : 800
+
+}
+
+
+
+
+
+]
+
+}
+
+
+
+
+
+
+
+
+
+inputPricing
+
+
+
+{
+
+“startDate” : “2024-02-01”,
+
+“endDate” :  “2024-05-20”,
+
+“salePrice” : 330
+
+}
+
+
+
+
+
+Classes which holds base pricing and inputpricing
+
+
+
+A method which accept basepricing and inputpricing and updates the basepricing based on inputpricing
+
+
+
+
+
+
+
+Public interface InventoryStorPrice {
+
+
+
+Public basePrice();
+
+Public inputPricing();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+basePricing
+
+{
+
+“basePrice” : 200,
+
+“rangePrice” : [
+
+{
+
+“startDate” : “2024-01-15”,
+
+“endDate” : “2024-01-31”,
+
+“salePrice” : 500
+
+},
+
+
+
+{
+
+“startDate” : “2024-02-01”,
+
+“endDate” :  “2024-05-20”,
+
+“salePrice” : 330
+
+},
+
+{
+
+“startDate” : “2024-05-21”,
+
+“endDate” : “2024-06-15”,
+
+“salePrice” : 800
+
+}
+
+
+
+
+
+]
+
