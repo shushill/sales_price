@@ -49,7 +49,7 @@ public class PriceStore {
         this.rangePrice = rp;
     }
 
-
+    
     public void updateInputRangePrice(RangePriceStore input_item){
 
         //default match
@@ -115,7 +115,7 @@ public class PriceStore {
             int st_inx = list.indexOf(nearestStartDate);
             int en_inx = list.indexOf(nearestEndDate);
 
-            // this is used to find number of timestamps between input start time and input end time;
+             // this is used to find number of timestamps between input start time and input end time;
 
             //three cases:
             //case 1: handle new item ---> diff <0
@@ -124,6 +124,7 @@ public class PriceStore {
             //case 4: handle multiple overlap --> diff >1 // this one is yet to be implemented
 
             // the diff if-else blocks look big but most of the code are repeatable and can be refactored into separate function
+
 
             int diff = en_inx - st_inx -1;
 
@@ -137,38 +138,23 @@ public class PriceStore {
 
                    int index = find_index_start(inputItemStartDate);
 
-                   RangePriceStore r1 = new RangePriceStore();
-                   r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                   r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate+incDay()));
-                   r1.setEndDate(rangePrice.get(index).getEndDate());
+                   RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
+
+
                    rangePrice.remove(rangePrice.get(index));
                    rangePrice.add(r1);
                    rangePrice.add(input_item);
-                   timeStamp.add(inputItemEndDate);
-                   timeStamp.add(r1.getStartDateInEpoch());
-                   //updateTimeStamps();
 
                } else if (en_match) {
 
                    int index = find_index_end(inputItemEndDate);
+                   RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
 
-                   RangePriceStore r1 = new RangePriceStore();
-                   r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                   r1.setStartDate(rangePrice.get(index).getStartDate());
-                   r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
                    rangePrice.remove(rangePrice.get(index));
                    rangePrice.add(r1);
                    rangePrice.add(input_item);
-                   timeStamp.add(inputItemStartDate);
-                   timeStamp.add(r1.getEndDateInEpoch());
-                   //updateTimeStamps();
 
-               } else if (inputItemStartDate < nearestStartDate &&  inputItemEndDate > nearestEndDate ) {
-
-                   System.out.println(DateTimeUtil.longToDate(inputItemStartDate));
-                   System.out.println(DateTimeUtil.longToDate(nearestStartDate));
-                   System.out.println(DateTimeUtil.longToDate(inputItemEndDate));
-                   System.out.println(DateTimeUtil.longToDate(nearestEndDate));
+               } else if (inputItemStartDate < nearestStartDate &&  inputItemEndDate > nearestEndDate && diff != -2) {
 
                    int index1 = find_index_end(nearestEndDate);
                    int index2 = find_index_start(nearestStartDate);
@@ -176,6 +162,7 @@ public class PriceStore {
                    if(index1 == -1){
                        index = index2;
                    }else {
+
                        index = index1;
                    }
 
@@ -184,29 +171,18 @@ public class PriceStore {
                    long num_en_ele = existing_ele.getEndDateInEpoch();
 
                    if(inputItemStartDate<num_st_ele){
-                       RangePriceStore r1 = new RangePriceStore();
-                       r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                       r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate+incDay()));
-                       r1.setEndDate(rangePrice.get(index).getEndDate());
+                       RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
 
                        rangePrice.remove(rangePrice.get(index));
                        rangePrice.add(input_item);
                        rangePrice.add(r1);
-                       timeStamp.add(inputItemStartDate);
-                       timeStamp.add(inputItemEndDate);
-                       timeStamp.add(r1.getStartDateInEpoch());
                    }else{
-                       RangePriceStore r1 = new RangePriceStore();
-                       r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                       r1.setStartDate(rangePrice.get(index).getStartDate());
-                       r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+                       RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
+
 
                        rangePrice.remove(rangePrice.get(index));
                        rangePrice.add(input_item);
                        rangePrice.add(r1);
-                       timeStamp.add(inputItemStartDate);
-                       timeStamp.add(inputItemEndDate);
-                       timeStamp.add(r1.getEndDateInEpoch());
                    }
 
 
@@ -223,15 +199,10 @@ public class PriceStore {
                        }
                    }
                    if(index != -1){
-                       RangePriceStore r1 = new RangePriceStore();
-                       r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                       r1.setStartDate(rangePrice.get(index).getStartDate());
-                       r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+                       RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
 
-                       RangePriceStore r2 = new RangePriceStore();
-                       r2.setSalePrice(rangePrice.get(index).getSalePrice());
-                       r2.setStartDate(DateTimeUtil.longToDate(inputItemEndDate+incDay()));
-                       r2.setEndDate(rangePrice.get(index).getEndDate());
+
+                       RangePriceStore r2 = makePriceObject(index, inputItemEndDate);
 
 
 
@@ -240,18 +211,12 @@ public class PriceStore {
                        rangePrice.add(r1);
                        rangePrice.add(r2);
 
-                       timeStamp.add(r1.getStartDateInEpoch());
-                       timeStamp.add(r1.getStartDateInEpoch());
-                       timeStamp.add(r2.getStartDateInEpoch());
-                       timeStamp.add(r2.getEndDateInEpoch());
                    }
 
 
 
                     rangePrice.add(input_item);
-                    timeStamp.add(inputItemStartDate);
-                    timeStamp.add(inputItemEndDate);
-                   //updateTimeStamps();
+
                }
             }else if (diff == 0){
 
@@ -265,20 +230,15 @@ public class PriceStore {
 
                     rangePrice.remove(rangePrice.get(index));
                     rangePrice.add(input_item);
-                    timeStamp.add(inputItemStartDate);
-                    timeStamp.add(inputItemEndDate);
-                   // updateTimeStamps();
                 }else if(en_match){
 
                     int index = find_index_end(inputItemEndDate);
 
                     rangePrice.remove(rangePrice.get(index));
                     rangePrice.add(input_item);
-                    timeStamp.add(inputItemStartDate);
-                    timeStamp.add(inputItemEndDate);
-                    //updateTimeStamps();
                 }else{
                     int index = -1;
+
 
                     for(int i=0; i<rangePrice.size(); ++i){
                         long st_num = rangePrice.get(i).getStartDateInEpoch();
@@ -291,125 +251,109 @@ public class PriceStore {
                     if(index != -1){
                         rangePrice.remove(rangePrice.get(index));
                         rangePrice.add(input_item);
-                        timeStamp.add(inputItemStartDate);
-                        timeStamp.add(inputItemEndDate);
-                        //updateTimeStamps();
                     }else {
                         index  = find_index_end(nearestStartDate);
-                        RangePriceStore r1 = new RangePriceStore();
-                        r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                        r1.setStartDate(rangePrice.get(index).getStartDate());
-                        r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+                        RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
 
-                        RangePriceStore r2 = new RangePriceStore();
-                        r2.setSalePrice(rangePrice.get(index+1).getSalePrice());
-                        r2.setStartDate(DateTimeUtil.longToDate(inputItemStartDate+incDay()));
-                        r2.setEndDate(rangePrice.get(index+1).getEndDate());
+
+
+                        RangePriceStore r2 = makePriceObject(index+1, inputItemStartDate);
 
                         rangePrice.remove(rangePrice.get(index));
                         rangePrice.remove(rangePrice.get(index));
                         rangePrice.add(r1);
                         rangePrice.add(r2);
                         rangePrice.add(input_item);
-                        timeStamp.add(r1.getEndDateInEpoch());
-                        timeStamp.add(inputItemStartDate);
-                        timeStamp.add(inputItemEndDate);
-                        timeStamp.add(r2.getStartDateInEpoch());
-
-                        //updateTimeStamps();
-
-
 
 
                     }
                 }
             }else if(diff == 1){
 
-                 if(st_match) {
+                if(st_match) {
 
                     int index = find_index_start(nearestStartDate);
 
                     rangePrice.remove(rangePrice.get(index));
-                    RangePriceStore r1 = new RangePriceStore();
-                    r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                    r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate + incDay()));
-                    r1.setEndDate(rangePrice.get(index).getEndDate());
+
+                    RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
 
                     rangePrice.remove(rangePrice.get(index));
 
                     rangePrice.add(r1);
                     rangePrice.add(input_item);
-                    timeStamp.add(inputItemStartDate);
-                    timeStamp.add(inputItemEndDate);
-                    timeStamp.add(r1.getStartDateInEpoch());
-                    //updateTimeStamps();
                 } else if (en_match) {
                     int index = find_index_end(nearestEndDate);
 
                     rangePrice.remove(rangePrice.get(index));
-                    RangePriceStore r1 = new RangePriceStore();
-                    r1.setSalePrice(rangePrice.get(index-1).getSalePrice());
-                    r1.setStartDate(rangePrice.get(index-1).getStartDate());
-                    r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+                    RangePriceStore r1 = makePriceObject2(index-1, inputItemStartDate);
+
 
                     rangePrice.remove(rangePrice.get(index-1));
                     rangePrice.add(r1);
                     rangePrice.add(input_item);
-                    timeStamp.add(inputItemStartDate);
-                    timeStamp.add(inputItemEndDate);
-                    timeStamp.add(r1.getEndDateInEpoch());
 
                 } else if (inputItemStartDate < nearestStartDate && inputItemEndDate < nearestEndDate) {
                     int index = find_index_start(nearestStartDate);
                     System.out.println("this block");
                     rangePrice.remove(rangePrice.get(index));
-                    RangePriceStore r1 = new RangePriceStore();
-                    r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                    r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate + incDay()));
-                    r1.setEndDate(rangePrice.get(index).getEndDate());
+                    RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
 
                     rangePrice.remove(rangePrice.get(index));
 
                     rangePrice.add(r1);
                     rangePrice.add(input_item);
-                    timeStamp.add(inputItemStartDate);
-                    timeStamp.add(inputItemEndDate);
-                    timeStamp.add(r1.getStartDateInEpoch());
 
                 }else {
                     int index = find_index_end(nearestEndDate);
 
                     rangePrice.remove(rangePrice.get(index));
-                    RangePriceStore r1 = new RangePriceStore();
-                    r1.setSalePrice(rangePrice.get(index-1).getSalePrice());
-                    r1.setStartDate(rangePrice.get(index-1).getStartDate());
-                    r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+
+                    RangePriceStore r1 = makePriceObject2(index-1, inputItemStartDate);
 
                     rangePrice.remove(rangePrice.get(index-1));
                     rangePrice.add(r1);
                     rangePrice.add(input_item);
-                    timeStamp.add(inputItemStartDate);
-                    timeStamp.add(inputItemEndDate);
-                    timeStamp.add(r1.getEndDateInEpoch());
                 }
 
-
+            }else {
+                // for more than single overlap use this block
+                System.out.println("else part");
             }
 
             Collections.sort(rangePrice, Comparator.comparingLong(RangePriceStore::getStartDateInEpoch).thenComparing(RangePriceStore::getEndDateInEpoch));
-
+            updateTimeStamps();
         }
 
-
-
-
-
-
-
-
-
-
     }
+
+    private void updateTimeStamps() {
+        timeStamp.clear();
+        for (RangePriceStore r : rangePrice) {
+            timeStamp.add(r.getStartDateInEpoch());
+            timeStamp.add(r.getEndDateInEpoch());
+        }
+    }
+
+    private RangePriceStore makePriceObject(int index, long inputItemEndDate){
+        RangePriceStore r1 = new RangePriceStore();
+        r1.setSalePrice(rangePrice.get(index).getSalePrice());
+        r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate+incDay()));
+        r1.setEndDate(rangePrice.get(index).getEndDate());
+        return r1;
+    }
+
+    private RangePriceStore makePriceObject2(int index, long inputItemStartDate){
+        RangePriceStore r1 = new RangePriceStore();
+        r1.setSalePrice(rangePrice.get(index).getSalePrice());
+        r1.setStartDate(rangePrice.get(index).getStartDate());
+        r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+        return r1;
+    }
+
+    /////////
+
+   
 //
     public int find_index_end(long num){
         int index = -1;
