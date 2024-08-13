@@ -73,6 +73,7 @@ public class PriceStore {
         if(inputItemEndDate < firstItemStartDate || inputItemStartDate > lastItemEndDate){
             rangePrice.add(input_item);
             System.out.println("sushil");
+            updateTimeStamps();
             Collections.sort(rangePrice, Comparator.comparingLong(RangePriceStore::getStartDateInEpoch).thenComparing(RangePriceStore::getEndDateInEpoch));
         }else{
             List<Long> list = new ArrayList<>(timeStamp);
