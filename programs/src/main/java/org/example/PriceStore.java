@@ -117,6 +117,11 @@ public class PriceStore {
 
             // this is used to find number of timestamps between input start time and input end time;
 
+            //three cases:
+            //case 1: handle new item ---> diff <0
+            //case 2: handle exact macthes --> if diff == 0
+            //case 3: handle single overlap --> diff>0
+
             int diff = en_inx - st_inx -1;
 
             System.out.println(diff);
