@@ -123,7 +123,7 @@ public class PriceStore {
             //case 3: handle single overlap --> diff == 1
             //case 4: handle multiple overlap --> diff >1 // this one is yet to be implemented
 
-            // the diff if-else blocks look big but most of the code are readable and can be refactored into separate function
+            // the diff if-else blocks look big but most of the code are repeatable and can be refactored into separate function
 
             int diff = en_inx - st_inx -1;
 
