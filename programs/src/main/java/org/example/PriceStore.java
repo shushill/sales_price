@@ -128,7 +128,7 @@ public class PriceStore {
 
             int diff = en_inx - st_inx -1;
 
-            System.out.println(diff);
+           // System.out.println(diff);
 
 
 
@@ -318,7 +318,7 @@ public class PriceStore {
 
             }else {
                 // for more than single overlap use this block
-                System.out.println("else part");
+                System.out.println("working on this part");
             }
 
             Collections.sort(rangePrice, Comparator.comparingLong(RangePriceStore::getStartDateInEpoch).thenComparing(RangePriceStore::getEndDateInEpoch));
