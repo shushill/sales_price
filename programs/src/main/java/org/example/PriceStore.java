@@ -115,6 +115,8 @@ public class PriceStore {
             int st_inx = list.indexOf(nearestStartDate);
             int en_inx = list.indexOf(nearestEndDate);
 
+            // this is used to find number of timestamps between input start time and input end time;
+
             int diff = en_inx - st_inx -1;
 
             System.out.println(diff);
