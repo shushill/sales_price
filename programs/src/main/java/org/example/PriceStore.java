@@ -134,197 +134,212 @@ public class PriceStore {
 
             if(diff < 0){
                 //enter new item if start time matches or end time matches
-               if(st_match){
-
-                   int index = find_index_start(inputItemStartDate);
-
-                   RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
+                handleNewItem(st_match, en_match, inputItemStartDate, inputItemEndDate, nearestStartDate, nearestEndDate, input_item, diff);
 
 
-                   rangePrice.remove(rangePrice.get(index));
-                   rangePrice.add(r1);
-                   rangePrice.add(input_item);
-
-               } else if (en_match) {
-
-                   int index = find_index_end(inputItemEndDate);
-                   RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
-
-                   rangePrice.remove(rangePrice.get(index));
-                   rangePrice.add(r1);
-                   rangePrice.add(input_item);
-
-               } else if (inputItemStartDate < nearestStartDate &&  inputItemEndDate > nearestEndDate && diff != -2) {
-
-                   int index1 = find_index_end(nearestEndDate);
-                   int index2 = find_index_start(nearestStartDate);
-                   int index = 0;
-                   if(index1 == -1){
-                       index = index2;
-                   }else {
-
-                       index = index1;
-                   }
-
-                   RangePriceStore existing_ele = rangePrice.get(index);
-                   long num_st_ele = existing_ele.getStartDateInEpoch();
-                   long num_en_ele = existing_ele.getEndDateInEpoch();
-
-                   if(inputItemStartDate<num_st_ele){
-                       RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
-
-                       rangePrice.remove(rangePrice.get(index));
-                       rangePrice.add(input_item);
-                       rangePrice.add(r1);
-                   }else{
-                       RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
-
-
-                       rangePrice.remove(rangePrice.get(index));
-                       rangePrice.add(input_item);
-                       rangePrice.add(r1);
-                   }
-
-
-
-               } else  {
-                    int index = -1;
-                   for(int i=0; i<rangePrice.size(); ++i){
-                       long st_dt = rangePrice.get(i).getStartDateInEpoch();
-                       long en_dt = rangePrice.get(i).getEndDateInEpoch();
-
-                       if(st_dt <inputItemStartDate && inputItemEndDate < en_dt){
-                           index = i;
-                           break;
-                       }
-                   }
-                   if(index != -1){
-                       RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
-
-
-                       RangePriceStore r2 = makePriceObject(index, inputItemEndDate);
-
-
-
-                       rangePrice.remove(rangePrice.get(index));
-
-                       rangePrice.add(r1);
-                       rangePrice.add(r2);
-
-                   }
-
-
-
-                    rangePrice.add(input_item);
-
-               }
             }else if (diff == 0){
 
-                if (st_match && en_match) {
-                    int index = find_index_end(inputItemEndDate);
-                    rangePrice.remove(rangePrice.get(index));
-                    rangePrice.add(input_item);
-                } else if(st_match){
-
-                    int index = find_index_start(inputItemStartDate);
-
-                    rangePrice.remove(rangePrice.get(index));
-                    rangePrice.add(input_item);
-                }else if(en_match){
-
-                    int index = find_index_end(inputItemEndDate);
-
-                    rangePrice.remove(rangePrice.get(index));
-                    rangePrice.add(input_item);
-                }else{
-                    int index = -1;
-
-
-                    for(int i=0; i<rangePrice.size(); ++i){
-                        long st_num = rangePrice.get(i).getStartDateInEpoch();
-                        long en_num = rangePrice.get(i).getEndDateInEpoch();
-                        if( st_num == nearestStartDate && en_num == nearestEndDate){
-                            index = i;
-                            break;
-                        }
-                    }
-                    if(index != -1){
-                        rangePrice.remove(rangePrice.get(index));
-                        rangePrice.add(input_item);
-                    }else {
-                        index  = find_index_end(nearestStartDate);
-                        RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
-
-
-
-                        RangePriceStore r2 = makePriceObject(index+1, inputItemStartDate);
-
-                        rangePrice.remove(rangePrice.get(index));
-                        rangePrice.remove(rangePrice.get(index));
-                        rangePrice.add(r1);
-                        rangePrice.add(r2);
-                        rangePrice.add(input_item);
-
-
-                    }
-                }
+                handleExactMerge(st_match, en_match, inputItemStartDate, inputItemEndDate, nearestStartDate, nearestEndDate, input_item);
             }else if(diff == 1){
 
-                if(st_match) {
-
-                    int index = find_index_start(nearestStartDate);
-
-                    rangePrice.remove(rangePrice.get(index));
-
-                    RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
-
-                    rangePrice.remove(rangePrice.get(index));
-
-                    rangePrice.add(r1);
-                    rangePrice.add(input_item);
-                } else if (en_match) {
-                    int index = find_index_end(nearestEndDate);
-
-                    rangePrice.remove(rangePrice.get(index));
-                    RangePriceStore r1 = makePriceObject2(index-1, inputItemStartDate);
-
-
-                    rangePrice.remove(rangePrice.get(index-1));
-                    rangePrice.add(r1);
-                    rangePrice.add(input_item);
-
-                } else if (inputItemStartDate < nearestStartDate && inputItemEndDate < nearestEndDate) {
-                    int index = find_index_start(nearestStartDate);
-                    System.out.println("this block");
-                    rangePrice.remove(rangePrice.get(index));
-                    RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
-
-                    rangePrice.remove(rangePrice.get(index));
-
-                    rangePrice.add(r1);
-                    rangePrice.add(input_item);
-
-                }else {
-                    int index = find_index_end(nearestEndDate);
-
-                    rangePrice.remove(rangePrice.get(index));
-
-                    RangePriceStore r1 = makePriceObject2(index-1, inputItemStartDate);
-
-                    rangePrice.remove(rangePrice.get(index-1));
-                    rangePrice.add(r1);
-                    rangePrice.add(input_item);
-                }
+                handleSingleOverlap(st_match, en_match, inputItemStartDate, inputItemEndDate, nearestStartDate, nearestEndDate, input_item);
 
             }else {
                 // for more than single overlap use this block
-                System.out.println("working on this part");
+                System.out.println("else part");
             }
 
             Collections.sort(rangePrice, Comparator.comparingLong(RangePriceStore::getStartDateInEpoch).thenComparing(RangePriceStore::getEndDateInEpoch));
             updateTimeStamps();
         }
 
+    }
+
+        private void handleSingleOverlap(boolean st_match, boolean en_match, long inputItemStartDate, long inputItemEndDate,long nearestStartDate, long nearestEndDate, RangePriceStore input_item){
+        if(st_match) {
+
+            int index = find_index_start(nearestStartDate);
+
+            rangePrice.remove(rangePrice.get(index));
+
+            RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
+
+            rangePrice.remove(rangePrice.get(index));
+
+            rangePrice.add(r1);
+            rangePrice.add(input_item);
+        } else if (en_match) {
+            int index = find_index_end(nearestEndDate);
+
+            rangePrice.remove(rangePrice.get(index));
+            RangePriceStore r1 = makePriceObject2(index-1, inputItemStartDate);
+
+
+            rangePrice.remove(rangePrice.get(index-1));
+            rangePrice.add(r1);
+            rangePrice.add(input_item);
+
+        } else if (inputItemStartDate < nearestStartDate && inputItemEndDate < nearestEndDate) {
+            int index = find_index_start(nearestStartDate);
+            System.out.println("this block");
+            rangePrice.remove(rangePrice.get(index));
+            RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
+
+            rangePrice.remove(rangePrice.get(index));
+
+            rangePrice.add(r1);
+            rangePrice.add(input_item);
+
+        }else {
+            int index = find_index_end(nearestEndDate);
+
+            rangePrice.remove(rangePrice.get(index));
+
+            RangePriceStore r1 = makePriceObject2(index-1, inputItemStartDate);
+
+            rangePrice.remove(rangePrice.get(index-1));
+            rangePrice.add(r1);
+            rangePrice.add(input_item);
+        }
+
+    }
+
+    private void handleExactMerge(boolean st_match, boolean en_match, long inputItemStartDate, long inputItemEndDate,long nearestStartDate, long nearestEndDate, RangePriceStore input_item){
+        if (st_match && en_match) {
+            int index = find_index_end(inputItemEndDate);
+            rangePrice.remove(rangePrice.get(index));
+            rangePrice.add(input_item);
+        } else if(st_match){
+
+            int index = find_index_start(inputItemStartDate);
+
+            rangePrice.remove(rangePrice.get(index));
+            rangePrice.add(input_item);
+        }else if(en_match){
+
+            int index = find_index_end(inputItemEndDate);
+
+            rangePrice.remove(rangePrice.get(index));
+            rangePrice.add(input_item);
+        }else{
+            int index = -1;
+
+
+            for(int i=0; i<rangePrice.size(); ++i){
+                long st_num = rangePrice.get(i).getStartDateInEpoch();
+                long en_num = rangePrice.get(i).getEndDateInEpoch();
+                if( st_num == nearestStartDate && en_num == nearestEndDate){
+                    index = i;
+                    break;
+                }
+            }
+            if(index != -1){
+                rangePrice.remove(rangePrice.get(index));
+                rangePrice.add(input_item);
+            }else {
+                index  = find_index_end(nearestStartDate);
+                RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
+
+
+
+                RangePriceStore r2 = makePriceObject(index+1, inputItemStartDate);
+
+                rangePrice.remove(rangePrice.get(index));
+                rangePrice.remove(rangePrice.get(index));
+                rangePrice.add(r1);
+                rangePrice.add(r2);
+                rangePrice.add(input_item);
+
+
+            }
+        }
+    }
+
+    private void handleNewItem(boolean st_match, boolean en_match, long inputItemStartDate, long inputItemEndDate,long nearestStartDate, long nearestEndDate, RangePriceStore input_item, int diff){
+        if(st_match){
+
+            int index = find_index_start(inputItemStartDate);
+
+            RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
+
+
+            rangePrice.remove(rangePrice.get(index));
+            rangePrice.add(r1);
+            rangePrice.add(input_item);
+
+        } else if (en_match) {
+
+            int index = find_index_end(inputItemEndDate);
+            RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
+
+            rangePrice.remove(rangePrice.get(index));
+            rangePrice.add(r1);
+            rangePrice.add(input_item);
+
+        } else if (inputItemStartDate < nearestStartDate &&  inputItemEndDate > nearestEndDate && diff != -2) {
+
+            int index1 = find_index_end(nearestEndDate);
+            int index2 = find_index_start(nearestStartDate);
+            int index = 0;
+            if(index1 == -1){
+                index = index2;
+            }else {
+
+                index = index1;
+            }
+
+            RangePriceStore existing_ele = rangePrice.get(index);
+            long num_st_ele = existing_ele.getStartDateInEpoch();
+            long num_en_ele = existing_ele.getEndDateInEpoch();
+
+            if(inputItemStartDate<num_st_ele){
+                RangePriceStore r1 = makePriceObject(index, inputItemEndDate);
+
+                rangePrice.remove(rangePrice.get(index));
+                rangePrice.add(input_item);
+                rangePrice.add(r1);
+            }else{
+                RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
+
+
+                rangePrice.remove(rangePrice.get(index));
+                rangePrice.add(input_item);
+                rangePrice.add(r1);
+            }
+
+
+
+        } else  {
+            int index = -1;
+            for(int i=0; i<rangePrice.size(); ++i){
+                long st_dt = rangePrice.get(i).getStartDateInEpoch();
+                long en_dt = rangePrice.get(i).getEndDateInEpoch();
+
+                if(st_dt <inputItemStartDate && inputItemEndDate < en_dt){
+                    index = i;
+                    break;
+                }
+            }
+            if(index != -1){
+                RangePriceStore r1 = makePriceObject2(index, inputItemStartDate);
+
+
+                RangePriceStore r2 = makePriceObject(index, inputItemEndDate);
+
+
+
+                rangePrice.remove(rangePrice.get(index));
+
+                rangePrice.add(r1);
+                rangePrice.add(r2);
+
+            }
+
+
+
+            rangePrice.add(input_item);
+
+        }
     }
 
     private void updateTimeStamps() {
