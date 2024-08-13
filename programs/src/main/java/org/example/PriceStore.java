@@ -120,7 +120,8 @@ public class PriceStore {
             //three cases:
             //case 1: handle new item ---> diff <0
             //case 2: handle exact macthes --> if diff == 0
-            //case 3: handle single overlap --> diff>0
+            //case 3: handle single overlap --> diff == 1
+            //case 4: handle multiple overlap --> diff >1 // this one is yet to be implemented
 
             int diff = en_inx - st_inx -1;
 
