@@ -278,22 +278,73 @@ public class PriceStore {
                 }
             }else if(diff == 1){
 
-                int index = find_index_start(nearestStartDate);
+                 if(st_match) {
 
-                rangePrice.remove(rangePrice.get(index));
-                RangePriceStore r1 = new RangePriceStore();
-                r1.setSalePrice(rangePrice.get(index).getSalePrice());
-                r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate+incDay()));
-                r1.setEndDate(rangePrice.get(index).getEndDate());
+                    int index = find_index_start(nearestStartDate);
 
-                rangePrice.remove(rangePrice.get(index));
+                    rangePrice.remove(rangePrice.get(index));
+                    RangePriceStore r1 = new RangePriceStore();
+                    r1.setSalePrice(rangePrice.get(index).getSalePrice());
+                    r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate + incDay()));
+                    r1.setEndDate(rangePrice.get(index).getEndDate());
 
-                rangePrice.add(r1);
-                rangePrice.add(input_item);
-                timeStamp.add(inputItemStartDate);
-                timeStamp.add(inputItemEndDate);
-                timeStamp.add(r1.getStartDateInEpoch());
-                //updateTimeStamps();
+                    rangePrice.remove(rangePrice.get(index));
+
+                    rangePrice.add(r1);
+                    rangePrice.add(input_item);
+                    timeStamp.add(inputItemStartDate);
+                    timeStamp.add(inputItemEndDate);
+                    timeStamp.add(r1.getStartDateInEpoch());
+                    //updateTimeStamps();
+                } else if (en_match) {
+                    int index = find_index_end(nearestEndDate);
+
+                    rangePrice.remove(rangePrice.get(index));
+                    RangePriceStore r1 = new RangePriceStore();
+                    r1.setSalePrice(rangePrice.get(index-1).getSalePrice());
+                    r1.setStartDate(rangePrice.get(index-1).getStartDate());
+                    r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+
+                    rangePrice.remove(rangePrice.get(index-1));
+                    rangePrice.add(r1);
+                    rangePrice.add(input_item);
+                    timeStamp.add(inputItemStartDate);
+                    timeStamp.add(inputItemEndDate);
+                    timeStamp.add(r1.getEndDateInEpoch());
+
+                } else if (inputItemStartDate < nearestStartDate && inputItemEndDate < nearestEndDate) {
+                    int index = find_index_start(nearestStartDate);
+                    System.out.println("this block");
+                    rangePrice.remove(rangePrice.get(index));
+                    RangePriceStore r1 = new RangePriceStore();
+                    r1.setSalePrice(rangePrice.get(index).getSalePrice());
+                    r1.setStartDate(DateTimeUtil.longToDate(inputItemEndDate + incDay()));
+                    r1.setEndDate(rangePrice.get(index).getEndDate());
+
+                    rangePrice.remove(rangePrice.get(index));
+
+                    rangePrice.add(r1);
+                    rangePrice.add(input_item);
+                    timeStamp.add(inputItemStartDate);
+                    timeStamp.add(inputItemEndDate);
+                    timeStamp.add(r1.getStartDateInEpoch());
+
+                }else {
+                    int index = find_index_end(nearestEndDate);
+
+                    rangePrice.remove(rangePrice.get(index));
+                    RangePriceStore r1 = new RangePriceStore();
+                    r1.setSalePrice(rangePrice.get(index-1).getSalePrice());
+                    r1.setStartDate(rangePrice.get(index-1).getStartDate());
+                    r1.setEndDate(DateTimeUtil.longToDate(inputItemStartDate-1));
+
+                    rangePrice.remove(rangePrice.get(index-1));
+                    rangePrice.add(r1);
+                    rangePrice.add(input_item);
+                    timeStamp.add(inputItemStartDate);
+                    timeStamp.add(inputItemEndDate);
+                    timeStamp.add(r1.getEndDateInEpoch());
+                }
 
 
             }
