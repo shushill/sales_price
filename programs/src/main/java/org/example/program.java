@@ -46,11 +46,13 @@ void main(){
     inpQuery.setStartDate(st_query);
     inpQuery.setEndDate(en_query);
 
+    System.out.println("Input Query ");
     System.out.println(inpQuery);
 
 
     priceStore.updateInputRangePrice(inpQuery);
 
+    System.out.println("Displaying the Price Store");
     System.out.println(priceStore);
 
 
